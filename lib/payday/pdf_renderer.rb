@@ -25,7 +25,9 @@ module Payday
       bill_to_ship_to(invoice, pdf)
       invoice_details(invoice, pdf)
       line_items_table(invoice, pdf)
-      totals_lines(invoice, pdf)
+      if invoice.show_total
+        totals_lines(invoice, pdf)
+      end
       notes(invoice, pdf)
 
       page_numbers(pdf)
@@ -187,16 +189,30 @@ module Payday
 
     def self.line_items_table(invoice, pdf)
       table_data = []
-      table_data << [bold_cell(pdf, I18n.t("payday.line_item.description", default: "Description"), borders: []),
+      if invoice.show_price 
+        table_data << [bold_cell(pdf, I18n.t("payday.line_item.description", default: "Description"), borders: []),
                      bold_cell(pdf, I18n.t("payday.line_item.unit_price", default: "Unit Price"), align: :center, borders: []),
                      bold_cell(pdf, I18n.t("payday.line_item.quantity", default: "Quantity"), align: :center, borders: []),
                      bold_cell(pdf, I18n.t("payday.line_item.amount", default: "Amount"), align: :center, borders: [])]
-      invoice.line_items.each do |line|
-        table_data << [line.description,
-                       (line.display_price || number_to_currency(line.price, invoice)),
-                       (line.display_quantity || BigDecimal.new(line.quantity.to_s).to_s("F")),
-                       number_to_currency(line.amount, invoice)]
       end
+      else
+        table_data << [bold_cell(pdf, I18n.t("payday.line_item.description", default: "Description"), borders: []),
+        bold_cell(pdf, I18n.t("payday.line_item.quantity", default: "Quantity"), align: :center, borders: [])
+      end
+
+      if invoice.show_price
+        invoice.line_items.each do |line|
+          table_data << [line.description,
+                        (line.display_price || number_to_currency(line.price, invoice)),
+                        (line.display_quantity || BigDecimal.new(line.quantity.to_s).to_s("F")),
+                        number_to_currency(line.amount, invoice)]
+        end
+      end
+      else
+        invoice.line_items.each do |line|
+          table_data << [line.description,
+                        (line.display_quantity || BigDecimal.new(line.quantity.to_s).to_s("F"))]
+      end  
 
       pdf.move_cursor_to(pdf.cursor - 20)
       pdf.table(table_data, width: pdf.bounds.width, header: true,

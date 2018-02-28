@@ -22,6 +22,8 @@ module Payday
       self.currency = options[:currency] || nil
       self.invoice_details = options[:invoice_details] || []
       self.invoice_date = options[:invoice_date] || nil
+      self.show_price = options[:show_price] || true
+      self.show_total = options[:show_total] || true
     end
 
     # The tax rate that we're applying, as a BigDecimal
