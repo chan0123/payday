@@ -212,7 +212,8 @@ module Payday
         invoice.line_items.each do |line|
           table_data << [line.description,
                         (line.display_quantity || BigDecimal.new(line.quantity.to_s).to_s("F"))]
-      end  
+        end  
+      end
 
       pdf.move_cursor_to(pdf.cursor - 20)
       pdf.table(table_data, width: pdf.bounds.width, header: true,
