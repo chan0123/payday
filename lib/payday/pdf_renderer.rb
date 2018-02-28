@@ -25,7 +25,9 @@ module Payday
       bill_to_ship_to(invoice, pdf)
       invoice_details(invoice, pdf)
       line_items_table(invoice, pdf)
-      totals_lines(invoice, pdf)
+      if invoice.show_total
+        totals_lines(invoice, pdf)
+      end
       notes(invoice, pdf)
 
       page_numbers(pdf)
@@ -229,13 +231,11 @@ module Payday
     end
 
     def self.totals_lines(invoice, pdf)
-      if invoice.show_total
         table_data = []
         table_data << [
           bold_cell(pdf, I18n.t("payday.invoice.subtotal", default: "Subtotal:")),
           cell(pdf, number_to_currency(invoice.subtotal, invoice), align: :right)
         ]
-      end
 
       if invoice.tax_rate > 0
         if invoice.tax_description.nil?
@@ -264,15 +264,13 @@ module Payday
         ]
       end
 
-      if invoice.show_total
         table_data << [
           bold_cell(pdf, I18n.t("payday.invoice.total", default: "Total:"),
                     size: 12),
           cell(pdf, number_to_currency(invoice.total, invoice),
               size: 12, align: :right)
         ]
-      end
-      
+
       table = pdf.make_table(table_data, cell_style: { borders: [] })
       pdf.bounding_box([pdf.bounds.width - table.width, pdf.cursor],
                        width: table.width, height: table.height + 2) do
