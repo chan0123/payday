@@ -22,8 +22,8 @@ module Payday
       self.currency = options[:currency] || nil
       self.invoice_details = options[:invoice_details] || []
       self.invoice_date = options[:invoice_date] || nil
-      self.show_price = options[:show_price]? options[:show_price] : true
-      self.show_total = options[:show_total]? options[:show_total] : true
+      self.show_price = options[:show_price].nil? options[:show_price] : true
+      self.show_total = options[:show_total].nil? options[:show_total] : true
       puts "show_price is #{self.show_price}"
       puts "show_total is #{self.show_total}"
     end
