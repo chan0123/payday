@@ -197,7 +197,7 @@ module Payday
       end
       else
         table_data << [bold_cell(pdf, I18n.t("payday.line_item.description", default: "Description"), borders: []),
-        bold_cell(pdf, I18n.t("payday.line_item.quantity", default: "Quantity"), align: :center, borders: [])
+        bold_cell(pdf, I18n.t("payday.line_item.quantity", default: "Quantity"), align: :center, borders: [])]
       end
 
       if invoice.show_price
