@@ -220,11 +220,20 @@ module Payday
                 row_colors: %w(dfdfdf ffffff)) do
 
         # left align the number columns
-        columns(1..3).rows(1..row_length - 1).style(align: :right)
-
+        if invoice.show_price 
+          columns(1..3).rows(1..row_length - 1).style(align: :right)
+        else
+          columns(1).rows(1..row_length - 1).style(align: :right)
+        end
         # set the column widths correctly
         natural = natural_column_widths
-        natural[0] = width - natural[1] - natural[2] - natural[3]
+
+        if invoice.show_price 
+          natural[0] = width - natural[1] - natural[2] - natural[3]
+        else
+          # only 2 columns
+          natural[0] = width - natural[1]
+        end
 
         column_widths = natural
       end
